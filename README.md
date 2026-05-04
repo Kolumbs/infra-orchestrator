@@ -53,16 +53,7 @@ pip install ansible
 ansible-galaxy install -r requirements.yml
 ```
 
-### 2 — Create your vault password file (local only, never committed)
-
-```bash
-echo "a-very-strong-passphrase" > .vault_pass
-chmod 600 .vault_pass
-```
-
-`.vault_pass` is already listed in `.gitignore`.
-
-### 3 — Populate and encrypt secrets
+### 2 — Populate and encrypt secrets
 
 Edit `group_vars/vault.yml` and replace **all** placeholder values:
 
@@ -88,7 +79,7 @@ To edit it later:
 ansible-vault edit group_vars/vault.yml
 ```
 
-### 4 — Adjust public variables
+### 3 — Adjust public variables
 
 Open `group_vars/all.yml` and set `system_timezone` if needed. All sensitive values (`ansible_user`, `github_account`, `github_repo`, `ssh_port`, `pi_server_1_ip`) are now in `vault.yml`.
 
@@ -102,7 +93,7 @@ Open `group_vars/all.yml` and set `system_timezone` if needed. All sensitive val
 ansible-playbook main.yml
 ```
 
-> If you have not set up `.vault_pass`, append `--ask-vault-pass`.
+> Ansible will prompt for your vault password on each run.
 
 ### Target a specific host
 
@@ -129,8 +120,8 @@ ansible-playbook main.yml --check --diff
 
 ## Security notes
 
-* **`group_vars/vault.yml` must be AES-256 encrypted** before any commit — see step 3 above.  
-* **`.vault_pass` must never be committed** — it is git-ignored.  
+* **`group_vars/vault.yml` must be AES-256 encrypted** before any commit — see step 2 above.  
+* Ansible prompts for the vault password on each run — no plaintext password file is used or needed.  
 * No plain-text secrets appear anywhere else in the repository.
 
 ---
