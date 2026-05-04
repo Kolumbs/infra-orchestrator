@@ -36,12 +36,12 @@ This repository uses a **zero-knowledge configuration**: even with full read acc
 
 | Tool | Version |
 |---|---|
-| Python | ≥ 3.9 |
 | Ansible | ≥ 2.14 |
 | ansible-galaxy | bundled with Ansible |
+| sshpass | any |
 
 ```bash
-pip install ansible
+sudo apt install ansible sshpass
 ```
 
 ---
