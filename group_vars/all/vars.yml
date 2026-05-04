@@ -1,0 +1,15 @@
+---
+# Silent bridge – maps vault secrets to standard Ansible/role variable names.
+# This file is safe to commit: it contains no real data, only variable references.
+
+ansible_user: "{{ vault_ansible_user }}"
+ansible_ssh_pass: "{{ vault_ansible_ssh_pass }}"
+ansible_port: "{{ vault_ssh_port }}"
+ansible_python_interpreter: /usr/bin/python3
+
+github_runner_registration_token: "{{ vault_github_runner_registration_token }}"
+github_account: "Kolumbs"
+github_repo: "infra-orchestrator"
+
+pi_server_1_ip: "{{ vault_pi_server_1_ip }}"
+system_timezone: "Europe/Riga"
