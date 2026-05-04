@@ -1,0 +1,134 @@
+---
+# Master playbook – provisions all managed devices.
+# Run: ansible-playbook main.yml --ask-vault-pass
+# Limit: ansible-playbook main.yml --limit networking --ask-vault-pass
+
+- name: Common Setup for all Pis
+  hosts: raspberries
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  tasks:
+    - name: System Update
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Ensure common packages are installed
+      ansible.builtin.apt:
+        name:
+          - vim
+          - curl
+          - git
+          - htop
+          - unattended-upgrades
+        state: present
+
+    - name: Enable automatic security updates
+      ansible.builtin.service:
+        name: unattended-upgrades
+        state: started
+        enabled: true
+
+- name: Provision GitHub Actions Runner (Pi 5)
+  hosts: pi-runner
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  roles:
+    - role: monolithprojects.github_actions_runner
+      vars:
+        access_token: "{{ personal_access_token }}"
+        github_account: "{{ github_account }}"
+        github_repo: "{{ github_repo }}"
+        runner_user: pi
+        runner_name: "pi-runner"
+        runner_labels:
+          - self-hosted
+          - Linux
+          - ARM64
+
+- name: Setup Voice API (Pi Voice)
+  hosts: pi-voice
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  tasks:
+    - name: Install Audio Dependencies
+      ansible.builtin.apt:
+        name:
+          - alsa-utils
+          - python3-pip
+          - python3-venv
+          - portaudio19-dev
+          - libsndfile1
+        state: present
+
+    - name: Create voice API application directory
+      ansible.builtin.file:
+        path: /opt/voice-api
+        state: directory
+        owner: pi
+        group: pi
+        mode: "0755"
+
+    - name: Deploy voice API systemd service
+      ansible.builtin.template:
+        src: templates/voice-api.service.j2
+        dest: /etc/systemd/system/voice-api.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd and restart voice-api
+
+  handlers:
+    - name: Reload systemd and restart voice-api
+      ansible.builtin.systemd:
+        name: voice-api
+        daemon_reload: true
+        state: restarted
+        enabled: true
+
+- name: Secure MikroTik Router
+  hosts: networking
+  gather_facts: false
+  vars_files:
+    - group_vars/vault.yml
+  tasks:
+    - name: Block Telnet (port 23) on input chain
+      community.routeros.api_modify:
+        hostname: "{{ ansible_host }}"
+        username: "{{ mikrotik_user }}"
+        password: "{{ router_password }}"
+        path: ip firewall filter
+        handle_absent_entries: remove
+        handle_entries_content: remove_as_much_as_possible
+        data:
+          - chain: input
+            protocol: tcp
+            dst-port: "23"
+            action: drop
+            comment: "Block Telnet"
+
+    - name: Allow established and related connections
+      community.routeros.api_modify:
+        hostname: "{{ ansible_host }}"
+        username: "{{ mikrotik_user }}"
+        password: "{{ router_password }}"
+        path: ip firewall filter
+        handle_absent_entries: remove
+        handle_entries_content: remove_as_much_as_possible
+        data:
+          - chain: input
+            connection-state: established,related
+            action: accept
+            comment: "Allow established/related"
+
+    - name: Set MikroTik system identity
+      community.routeros.command:
+        hostname: "{{ ansible_host }}"
+        username: "{{ mikrotik_user }}"
+        password: "{{ router_password }}"
+        commands:
+          - "/system identity set name={{ mikrotik_identity }}"

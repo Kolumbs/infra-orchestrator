@@ -1,0 +1,15 @@
+---
+# Host-specific variables for pi-voice (192.168.1.51).
+# These override anything set in group_vars/all.yml for this host only.
+
+# ── Audio / Voice API ─────────────────────────────────────────────────────────
+voice_api_port: 5000
+voice_api_user: pi
+voice_api_dir: /opt/voice-api
+
+# ALSA card index for the USB microphone/speaker.
+# Run `aplay -l` on the device to find the correct card index.
+alsa_card_index: 1
+
+# Python virtual environment used by the voice API service.
+voice_api_venv: /opt/voice-api/venv

@@ -1,0 +1,16 @@
+---
+# Ansible Vault – encrypted secrets for a public repository.
+#
+# ⚠  DO NOT COMMIT THIS FILE IN PLAIN TEXT.
+# Before committing, encrypt with:
+#   ansible-vault encrypt group_vars/vault.yml
+#
+# To edit later:
+#   ansible-vault edit group_vars/vault.yml
+#
+# Create a local .vault_pass file (git-ignored) so playbooks can decrypt
+# automatically, or pass --ask-vault-pass at runtime.
+
+personal_access_token: "ghp_REPLACE_WITH_YOUR_GITHUB_PAT"
+ansible_ssh_pass: "REPLACE_WITH_YOUR_PI_PASSWORD"
+router_password: "REPLACE_WITH_YOUR_MIKROTIK_PASSWORD"

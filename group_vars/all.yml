@@ -1,0 +1,20 @@
+---
+# Public shared variables – safe to commit.
+# Device-specific overrides live in host_vars/.
+
+# ── Python interpreter ───────────────────────────────────────────────────────
+ansible_python_interpreter: /usr/bin/python3
+
+# ── SSH hardening ─────────────────────────────────────────────────────────────
+ssh_port: 22
+
+# ── GitHub Actions Runner defaults ───────────────────────────────────────────
+github_account: "your-github-username"
+github_repo: "your-app-repo"
+
+# ── MikroTik defaults ─────────────────────────────────────────────────────────
+mikrotik_user: admin
+mikrotik_identity: home-router
+
+# ── Timezone ──────────────────────────────────────────────────────────────────
+system_timezone: "Europe/Riga"

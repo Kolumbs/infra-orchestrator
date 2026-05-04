@@ -1,0 +1,17 @@
+[Unit]
+Description=Voice API Service
+After=network.target sound.target
+
+[Service]
+Type=simple
+User={{ voice_api_user }}
+WorkingDirectory={{ voice_api_dir }}
+ExecStart={{ voice_api_venv }}/bin/python app.py --port {{ voice_api_port }}
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+Environment="ALSA_CARD={{ alsa_card_index }}"
+
+[Install]
+WantedBy=multi-user.target
