@@ -1,6 +1,6 @@
 ---
 # Public shared variables – safe to commit.
-# Sensitive values (SSH port, GitHub credentials, host IPs) live in vault.yml.
+# Sensitive values (SSH user, SSH port, GitHub credentials, host IPs) live in vault.yml.
 # Device-specific overrides live in host_vars/.
 
 # ── Python interpreter ───────────────────────────────────────────────────────

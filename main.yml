@@ -2,8 +2,8 @@
 # Master playbook – provisions all managed devices.
 # Run: ansible-playbook main.yml --ask-vault-pass
 
-- name: Common Setup for all Pis
-  hosts: raspberries
+- name: Common Setup for all Pi servers
+  hosts: pi-servers
   become: true
   vars_files:
     - group_vars/vault.yml
@@ -31,7 +31,7 @@
         enabled: true
 
 - name: Provision GitHub Actions Runner (Pi)
-  hosts: pi-runner
+  hosts: pi-server-1
   become: true
   vars_files:
     - group_vars/vault.yml
@@ -41,8 +41,8 @@
         access_token: "{{ personal_access_token }}"
         github_account: "{{ github_account }}"
         github_repo: "{{ github_repo }}"
-        runner_user: pi
-        runner_name: "pi-runner"
+        runner_user: "{{ ansible_user }}"
+        runner_name: "pi-server-1"
         runner_labels:
           - self-hosted
           - Linux

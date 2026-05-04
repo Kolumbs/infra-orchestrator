@@ -1,0 +1,4 @@
+---
+# Host-specific variables for pi-server-1.
+# ansible_host is resolved from the vault-encrypted pi_server_1_ip variable.
+ansible_host: "{{ pi_server_1_ip }}"

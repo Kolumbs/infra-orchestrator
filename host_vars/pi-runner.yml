@@ -1,4 +1,0 @@
----
-# Host-specific variables for pi-runner.
-# ansible_host is resolved from the vault-encrypted pi_runner_ip variable.
-ansible_host: "{{ pi_runner_ip }}"

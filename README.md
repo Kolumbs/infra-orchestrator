@@ -16,18 +16,18 @@ infra-orchestrator/
 │   ├── all.yml          # Public shared variables
 │   └── vault.yml        # AES-256 encrypted secrets  ← MUST be encrypted
 └── host_vars/
-    └── pi-runner.yml    # Resolves ansible_host from vault
+    └── pi-server-1.yml  # Resolves ansible_host from vault
 ```
 
 ---
 
 ## Managed devices
 
-| Host | Role |
-|---|---|
-| `pi-runner` | GitHub Actions self-hosted runner |
+| Host | Group | Role |
+|---|---|---|
+| `pi-server-1` | `pi-servers` | GitHub Actions self-hosted runner |
 
-> The IP address is stored in `vault.yml` as `pi_runner_ip` and never committed in plain text.
+> The IP address is stored in `vault.yml` as `pi_server_1_ip` and never committed in plain text.
 
 ---
 
@@ -69,10 +69,11 @@ Edit `group_vars/vault.yml` and replace **all** placeholder values:
 ```yaml
 personal_access_token: "ghp_your_real_token"
 ansible_ssh_pass:       "your_pi_ssh_password"
+ansible_user:           "pi"
 ssh_port:               "22"
 github_account:         "your-github-username"
 github_repo:            "your-app-repo"
-pi_runner_ip:           "192.168.x.x"
+pi_server_1_ip:         "192.168.x.x"
 ```
 
 Then encrypt the file so it is safe to commit:
@@ -89,7 +90,7 @@ ansible-vault edit group_vars/vault.yml
 
 ### 4 — Adjust public variables
 
-Open `group_vars/all.yml` and set `system_timezone` if needed. All sensitive values (`github_account`, `github_repo`, `ssh_port`, `pi_runner_ip`) are now in `vault.yml`.
+Open `group_vars/all.yml` and set `system_timezone` if needed. All sensitive values (`ansible_user`, `github_account`, `github_repo`, `ssh_port`, `pi_server_1_ip`) are now in `vault.yml`.
 
 ---
 
@@ -106,7 +107,7 @@ ansible-playbook main.yml
 ### Target a specific host
 
 ```bash
-ansible-playbook main.yml --limit pi-runner
+ansible-playbook main.yml --limit pi-server-1
 ```
 
 ### Dry-run (check mode)
@@ -121,8 +122,8 @@ ansible-playbook main.yml --check --diff
 
 | Play | Hosts | Description |
 |---|---|---|
-| Common Setup | `raspberries` | `apt dist-upgrade`, installs common packages, enables unattended-upgrades |
-| GitHub Actions Runner | `pi-runner` | Installs & registers a self-hosted runner via `monolithprojects.github_actions_runner` |
+| Common Setup | `pi-servers` | `apt dist-upgrade`, installs common packages, enables unattended-upgrades |
+| GitHub Actions Runner | `pi-server-1` | Installs & registers a self-hosted runner via `monolithprojects.github_actions_runner` |
 
 ---
 
