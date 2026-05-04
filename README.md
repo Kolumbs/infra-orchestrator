@@ -1,4 +1,4 @@
-# my-infra-orchestrator
+# infra-orchestrator
 
 Ansible-based orchestrator for managing home infrastructure without Docker — Raspberry Pi nodes and anything else that speaks SSH. Designed to expand to additional device types (routers, microcontrollers, etc.) as needs grow.
 
