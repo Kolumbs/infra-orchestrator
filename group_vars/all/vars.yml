@@ -1,6 +1,7 @@
 ---
 # Silent bridge – maps vault secrets to standard Ansible/role variable names.
 # This file is safe to commit: it contains no real data, only variable references.
+# vault.yml holds the vault_ secrets — must stay AES-256 encrypted. See README.
 
 ansible_user: "{{ vault_ansible_user }}"
 ansible_ssh_pass: "{{ vault_ansible_ssh_pass }}"
