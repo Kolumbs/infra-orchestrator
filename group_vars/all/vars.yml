@@ -11,5 +11,4 @@ github_runner_registration_token: "{{ vault_github_runner_registration_token }}"
 github_account: "Kolumbs"
 github_repo: "infra-orchestrator"
 
-pi_server_1_ip: "{{ vault_pi_server_1_ip }}"
 system_timezone: "Europe/Riga"
