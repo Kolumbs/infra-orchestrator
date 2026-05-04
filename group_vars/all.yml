@@ -12,9 +12,5 @@ ssh_port: 22
 github_account: "your-github-username"
 github_repo: "your-app-repo"
 
-# ── MikroTik defaults ─────────────────────────────────────────────────────────
-mikrotik_user: admin
-mikrotik_identity: home-router
-
 # ── Timezone ──────────────────────────────────────────────────────────────────
 system_timezone: "Europe/Riga"

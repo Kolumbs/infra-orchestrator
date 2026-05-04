@@ -1,6 +1,6 @@
 # my-infra-orchestrator
 
-Ansible-based orchestrator for managing home infrastructure without Docker — Raspberry Pi nodes, a MikroTik router, and anything else that speaks SSH or the RouterOS API.
+Ansible-based orchestrator for managing home infrastructure without Docker — Raspberry Pi nodes and anything else that speaks SSH. Designed to expand to additional device types (routers, microcontrollers, etc.) as needs grow.
 
 ---
 
@@ -8,18 +8,14 @@ Ansible-based orchestrator for managing home infrastructure without Docker — R
 
 ```
 infra-orchestrator/
-├── ansible.cfg              # Global Ansible settings
-├── inventory.ini            # Device IPs grouped by type
-├── requirements.yml         # Community roles & collections
-├── main.yml                 # Master playbook
+├── ansible.cfg          # Global Ansible settings
+├── inventory.ini        # Device IPs grouped by type
+├── requirements.yml     # Community roles
+├── main.yml             # Master playbook
 ├── group_vars/
-│   ├── all.yml              # Public shared variables
-│   └── vault.yml            # AES-256 encrypted secrets  ← MUST be encrypted
-├── host_vars/
-│   ├── pi-voice.yml         # Voice API Pi config
-│   └── mikrotik.yml         # MikroTik router config
-└── templates/
-    └── voice-api.service.j2 # systemd unit for Voice API
+│   ├── all.yml          # Public shared variables
+│   └── vault.yml        # AES-256 encrypted secrets  ← MUST be encrypted
+└── host_vars/           # Per-host variable overrides (add as needed)
 ```
 
 ---
@@ -28,9 +24,7 @@ infra-orchestrator/
 
 | Host | IP | Role |
 |---|---|---|
-| `pi-runner` | 192.168.1.50 | GitHub Actions self-hosted runner (Pi 5) |
-| `pi-voice` | 192.168.1.51 | Voice / audio API |
-| `mikrotik` | 192.168.88.1 | MikroTik home router |
+| `pi-runner` | 192.168.1.50 | GitHub Actions self-hosted runner |
 
 ---
 
@@ -50,11 +44,10 @@ pip install ansible
 
 ## First-time setup
 
-### 1 — Install required roles & collections
+### 1 — Install required roles
 
 ```bash
 ansible-galaxy install -r requirements.yml
-ansible-galaxy collection install community.routeros
 ```
 
 ### 2 — Create your vault password file (local only, never committed)
@@ -73,7 +66,6 @@ Edit `group_vars/vault.yml` and replace the placeholder values:
 ```yaml
 personal_access_token: "ghp_your_real_token"
 ansible_ssh_pass:       "your_pi_ssh_password"
-router_password:        "your_mikrotik_password"
 ```
 
 Then encrypt the file so it is safe to commit:
@@ -90,15 +82,13 @@ ansible-vault edit group_vars/vault.yml
 
 ### 4 — Adjust public variables
 
-Open `group_vars/all.yml` and set `github_account`, `github_repo`, `system_timezone`, etc.
-
-Host-specific tuning lives in `host_vars/pi-voice.yml` and `host_vars/mikrotik.yml`.
+Open `group_vars/all.yml` and set `github_account`, `github_repo`, and `system_timezone`.
 
 ---
 
 ## Running playbooks
 
-### Full provisioning (all hosts)
+### Full provisioning
 
 ```bash
 ansible-playbook main.yml
@@ -106,14 +96,10 @@ ansible-playbook main.yml
 
 > If you have not set up `.vault_pass`, append `--ask-vault-pass`.
 
-### Target a single group or host
+### Target a specific host
 
 ```bash
-# Only networking devices (MikroTik)
-ansible-playbook main.yml --limit networking
-
-# Only a specific Pi
-ansible-playbook main.yml --limit pi-voice
+ansible-playbook main.yml --limit pi-runner
 ```
 
 ### Dry-run (check mode)
@@ -128,10 +114,8 @@ ansible-playbook main.yml --check --diff
 
 | Play | Hosts | Description |
 |---|---|---|
-| Common Setup | `raspberries` | `apt upgrade`, installs common packages, enables unattended-upgrades |
+| Common Setup | `raspberries` | `apt dist-upgrade`, installs common packages, enables unattended-upgrades |
 | GitHub Actions Runner | `pi-runner` | Installs & registers a self-hosted runner via `monolithprojects.github_actions_runner` |
-| Voice API | `pi-voice` | Installs audio deps, deploys `/etc/systemd/system/voice-api.service` via template |
-| Secure MikroTik | `networking` | Blocks Telnet (TCP 23), allows established connections, sets router identity |
 
 ---
 
@@ -146,5 +130,6 @@ ansible-playbook main.yml --check --diff
 ## Adding new devices
 
 1. Add the host to `inventory.ini` under the appropriate group (or a new one).  
-2. Create `host_vars/<hostname>.yml` for device-specific variables.  
+2. Create `host_vars/<hostname>.yml` for any device-specific variables.  
 3. Add a new play to `main.yml` targeting that host/group.
+

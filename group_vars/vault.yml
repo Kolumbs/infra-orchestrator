@@ -13,4 +13,3 @@
 
 personal_access_token: "ghp_REPLACE_WITH_YOUR_GITHUB_PAT"
 ansible_ssh_pass: "REPLACE_WITH_YOUR_PI_PASSWORD"
-router_password: "REPLACE_WITH_YOUR_MIKROTIK_PASSWORD"
