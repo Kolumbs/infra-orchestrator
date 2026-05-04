@@ -58,7 +58,7 @@ ansible-galaxy install -r requirements.yml
 Edit `group_vars/vault.yml` and replace **all** placeholder values:
 
 ```yaml
-github_runner_token: "ghp_your_github_runner_pat"
+github_runner_registration_token: "ghp_your_github_runner_pat"
 ansible_ssh_pass:       "your_pi_ssh_password"
 ansible_user:           "pi"
 ssh_port:               "22"
@@ -122,7 +122,8 @@ ansible-playbook main.yml --check --diff
 
 * **`group_vars/vault.yml` must be AES-256 encrypted** before any commit — see step 2 above.  
 * Ansible prompts for the vault password on each run — no plaintext password file is used or needed.  
-* No plain-text secrets appear anywhere else in the repository.
+* No plain-text secrets appear anywhere else in the repository.  
+* **`github_runner_registration_token`** is only needed when provisioning or reinstalling a runner — use a short-lived PAT (e.g. 1-day expiry, `repo` scope) and revoke it once provisioning is done.
 
 ---
 

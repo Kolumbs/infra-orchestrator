@@ -10,7 +10,9 @@
 #
 # Ansible will prompt for the vault password at runtime.
 
-github_runner_token: "ghp_REPLACE_WITH_GITHUB_RUNNER_PAT"
+# GitHub PAT used only to register the runner. Grant repo scope, set a short
+# expiry, and revoke/rotate after provisioning is done.
+github_runner_registration_token: "ghp_REPLACE_WITH_GITHUB_RUNNER_PAT"
 ansible_ssh_pass: "REPLACE_WITH_YOUR_PI_PASSWORD"
 ansible_user: "REPLACE_WITH_SSH_USER"
 ssh_port: "REPLACE_WITH_SSH_PORT"
