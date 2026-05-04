@@ -58,7 +58,7 @@ ansible-galaxy install -r requirements.yml
 Edit `group_vars/vault.yml` and replace **all** placeholder values:
 
 ```yaml
-personal_access_token: "ghp_your_real_token"
+github_runner_token: "ghp_your_github_runner_pat"
 ansible_ssh_pass:       "your_pi_ssh_password"
 ansible_user:           "pi"
 ssh_port:               "22"

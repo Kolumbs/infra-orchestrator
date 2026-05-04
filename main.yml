@@ -38,7 +38,7 @@
   roles:
     - role: monolithprojects.github_actions_runner
       vars:
-        access_token: "{{ personal_access_token }}"
+        access_token: "{{ github_runner_token }}"
         github_account: "{{ github_account }}"
         github_repo: "{{ github_repo }}"
         runner_user: "{{ ansible_user }}"
