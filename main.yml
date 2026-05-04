@@ -1,0 +1,49 @@
+---
+# Master playbook – provisions all managed devices.
+# Run: ansible-playbook main.yml --ask-vault-pass
+
+- name: Common Setup for all Pi servers
+  hosts: pi-servers
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  tasks:
+    - name: System Update
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Ensure common packages are installed
+      ansible.builtin.apt:
+        name:
+          - vim
+          - curl
+          - git
+          - htop
+          - unattended-upgrades
+        state: present
+
+    - name: Enable automatic security updates
+      ansible.builtin.service:
+        name: unattended-upgrades
+        state: started
+        enabled: true
+
+- name: Provision GitHub Actions Runner (Pi)
+  hosts: pi-server-1
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  roles:
+    - role: monolithprojects.github_actions_runner
+      vars:
+        access_token: "{{ personal_access_token }}"
+        github_account: "{{ github_account }}"
+        github_repo: "{{ github_repo }}"
+        runner_user: "{{ ansible_user }}"
+        runner_name: "pi-server-1"
+        runner_labels:
+          - self-hosted
+          - Linux
+          - ARM64

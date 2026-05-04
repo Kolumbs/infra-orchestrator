@@ -1,0 +1,23 @@
+# ── Vault password file – NEVER commit this ──────────────────────────────────
+.vault_pass
+
+# ── Python / pip ──────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# ── Ansible generated files ───────────────────────────────────────────────────
+*.retry
+*.log
+collections/
+roles/
+
+# ── OS / editor artefacts ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
