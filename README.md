@@ -9,22 +9,25 @@ Ansible-based orchestrator for managing home infrastructure without Docker — R
 ```
 infra-orchestrator/
 ├── ansible.cfg          # Global Ansible settings
-├── inventory.ini        # Device IPs grouped by type
+├── inventory.ini        # Host groups (no IPs — resolved from vault)
 ├── requirements.yml     # Community roles
 ├── main.yml             # Master playbook
 ├── group_vars/
 │   ├── all.yml          # Public shared variables
 │   └── vault.yml        # AES-256 encrypted secrets  ← MUST be encrypted
-└── host_vars/           # Per-host variable overrides (add as needed)
+└── host_vars/
+    └── pi-runner.yml    # Resolves ansible_host from vault
 ```
 
 ---
 
 ## Managed devices
 
-| Host | IP | Role |
-|---|---|---|
-| `pi-runner` | 192.168.1.50 | GitHub Actions self-hosted runner |
+| Host | Role |
+|---|---|
+| `pi-runner` | GitHub Actions self-hosted runner |
+
+> The IP address is stored in `vault.yml` as `pi_runner_ip` and never committed in plain text.
 
 ---
 
@@ -61,11 +64,15 @@ chmod 600 .vault_pass
 
 ### 3 — Populate and encrypt secrets
 
-Edit `group_vars/vault.yml` and replace the placeholder values:
+Edit `group_vars/vault.yml` and replace **all** placeholder values:
 
 ```yaml
 personal_access_token: "ghp_your_real_token"
 ansible_ssh_pass:       "your_pi_ssh_password"
+ssh_port:               "22"
+github_account:         "your-github-username"
+github_repo:            "your-app-repo"
+pi_runner_ip:           "192.168.x.x"
 ```
 
 Then encrypt the file so it is safe to commit:
@@ -82,7 +89,7 @@ ansible-vault edit group_vars/vault.yml
 
 ### 4 — Adjust public variables
 
-Open `group_vars/all.yml` and set `github_account`, `github_repo`, and `system_timezone`.
+Open `group_vars/all.yml` and set `system_timezone` if needed. All sensitive values (`github_account`, `github_repo`, `ssh_port`, `pi_runner_ip`) are now in `vault.yml`.
 
 ---
 

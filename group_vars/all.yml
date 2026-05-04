@@ -1,16 +1,13 @@
 ---
 # Public shared variables – safe to commit.
+# Sensitive values (SSH port, GitHub credentials, host IPs) live in vault.yml.
 # Device-specific overrides live in host_vars/.
 
 # ── Python interpreter ───────────────────────────────────────────────────────
 ansible_python_interpreter: /usr/bin/python3
 
-# ── SSH hardening ─────────────────────────────────────────────────────────────
-ssh_port: 22
-
-# ── GitHub Actions Runner defaults ───────────────────────────────────────────
-github_account: "your-github-username"
-github_repo: "your-app-repo"
+# ── SSH port (value comes from vault) ────────────────────────────────────────
+ansible_port: "{{ ssh_port }}"
 
 # ── Timezone ──────────────────────────────────────────────────────────────────
 system_timezone: "Europe/Riga"

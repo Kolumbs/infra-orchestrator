@@ -13,3 +13,7 @@
 
 personal_access_token: "ghp_REPLACE_WITH_YOUR_GITHUB_PAT"
 ansible_ssh_pass: "REPLACE_WITH_YOUR_PI_PASSWORD"
+ssh_port: "REPLACE_WITH_SSH_PORT"
+github_account: "REPLACE_WITH_GITHUB_ACCOUNT"
+github_repo: "REPLACE_WITH_GITHUB_REPO"
+pi_runner_ip: "REPLACE_WITH_PI_RUNNER_IP"
