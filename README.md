@@ -166,6 +166,28 @@ ansible-playbook main.yml --check --diff
 
 ---
 
+## Removing things from managed hosts
+
+Ansible does not automatically remove anything when you delete a task or role from a playbook. If you remove a package, service, or user from the playbook, it will keep running on the host untouched.
+
+To actually remove something, you must explicitly add a task with `state: absent` first, run the playbook, then remove the task:
+
+```yaml
+- name: Remove package
+  ansible.builtin.apt:
+    name: somepackage
+    state: absent
+
+- name: Remove user
+  ansible.builtin.user:
+    name: someuser
+    state: absent
+```
+
+For roles (e.g. GitHub Actions runner), check the role's documentation for a removal state — most support `state: absent` or similar.
+
+---
+
 ## Adding new devices
 
 1. Add the host to `inventory.ini` under the appropriate group (or a new one).
