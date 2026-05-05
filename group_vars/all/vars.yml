@@ -10,6 +10,6 @@ ansible_python_interpreter: /usr/bin/python3
 
 github_runner_registration_token: "{{ vault_github_runner_registration_token }}"
 github_account: "Kolumbs"
-github_repo: "infra-orchestrator"
+github_repo: "family-bot"
 
 system_timezone: "Europe/Riga"

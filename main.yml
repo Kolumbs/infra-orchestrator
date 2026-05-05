@@ -9,7 +9,7 @@
     - name: System Update
       ansible.builtin.apt:
         update_cache: yes
-        upgrade: dist
+        upgrade: safe
         cache_valid_time: 3600
 
     - name: Ensure common packages are installed
