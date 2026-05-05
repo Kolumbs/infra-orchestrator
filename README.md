@@ -50,47 +50,45 @@ sudo apt install ansible-core sshpass
 
 Before Ansible can connect, a dedicated `ansible` user must be created on each server. Do this once over direct access (keyboard/HDMI or with the default `pi` user).
 
-### 1 — Create the ansible user
+### 1 — Create the automation user
 
 ```bash
-sudo useradd --create-home --shell /usr/sbin/nologin --password '!' ansible
+sudo useradd --create-home --shell /bin/bash --password '!' <username>
 ```
 
 - `--password '!'` locks password login — SSH key is the only way in
-- `/usr/sbin/nologin` prevents interactive shell sessions
+- `/bin/bash` is required so Ansible can execute commands remotely
 
 ### 2 — Add your SSH public key
 
+On your control machine, generate a key if you don't have one yet:
+
 ```bash
-sudo mkdir -p /home/ansible/.ssh
-sudo nano /home/ansible/.ssh/authorized_keys   # paste your public key here
-sudo chmod 700 /home/ansible/.ssh
-sudo chmod 600 /home/ansible/.ssh/authorized_keys
-sudo chown -R ansible:ansible /home/ansible/.ssh
+ssh-keygen -t ed25519
 ```
 
-Your public key is at `~/.ssh/id_ed25519.pub` on your control machine. If you don't have one yet:
+Then copy it to the Pi in one command (run from your control machine):
 
 ```bash
-ssh-keygen -t ed25519 -C "ansible"
+cat ~/.ssh/id_ed25519.pub | ssh <pi-user>@<pi-ip> "sudo mkdir -p /home/<username>/.ssh && sudo tee /home/<username>/.ssh/authorized_keys && sudo chmod 700 /home/<username>/.ssh && sudo chmod 600 /home/<username>/.ssh/authorized_keys && sudo chown -R <username>:<username> /home/<username>/.ssh"
 ```
 
 ### 3 — Grant passwordless sudo
 
 ```bash
-sudo visudo -f /etc/sudoers.d/ansible
+sudo visudo -f /etc/sudoers.d/<username>
 ```
 
 Add this line:
 
 ```
-ansible ALL=(ALL) NOPASSWD: ALL
+<username> ALL=(ALL) NOPASSWD: ALL
 ```
 
 ### 4 — Verify access from your control machine
 
 ```bash
-ssh -i ~/.ssh/id_ed25519 ansible@<pi-ip>
+ssh -i ~/.ssh/id_ed25519 <username>@<pi-ip>
 ```
 
 Should connect without a password prompt. Once confirmed, Ansible is ready to use.
