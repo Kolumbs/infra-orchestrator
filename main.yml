@@ -3,7 +3,7 @@
 # Run: ansible-playbook main.yml --ask-vault-pass
 
 - name: Common Setup for all Pi servers
-  hosts: pi-servers
+  hosts: servers
   become: true
   tasks:
     - name: System Update

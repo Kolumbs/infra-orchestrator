@@ -28,7 +28,7 @@ This repository uses a **zero-knowledge configuration**: even with full read acc
 
 | Host | Group | Role |
 |---|---|---|
-| `pi-server-1` | `pi-servers` | GitHub Actions self-hosted runner |
+| `pi-server-1` | `servers` | GitHub Actions self-hosted runner |
 
 ---
 
@@ -41,8 +41,59 @@ This repository uses a **zero-knowledge configuration**: even with full read acc
 | sshpass | any |
 
 ```bash
-sudo apt install ansible sshpass
+sudo apt install ansible-core sshpass
 ```
+
+---
+
+## First-time server bootstrap (manual, on the Pi)
+
+Before Ansible can connect, a dedicated `ansible` user must be created on each server. Do this once over direct access (keyboard/HDMI or with the default `pi` user).
+
+### 1 — Create the ansible user
+
+```bash
+sudo useradd --create-home --shell /usr/sbin/nologin --password '!' ansible
+```
+
+- `--password '!'` locks password login — SSH key is the only way in
+- `/usr/sbin/nologin` prevents interactive shell sessions
+
+### 2 — Add your SSH public key
+
+```bash
+sudo mkdir -p /home/ansible/.ssh
+sudo nano /home/ansible/.ssh/authorized_keys   # paste your public key here
+sudo chmod 700 /home/ansible/.ssh
+sudo chmod 600 /home/ansible/.ssh/authorized_keys
+sudo chown -R ansible:ansible /home/ansible/.ssh
+```
+
+Your public key is at `~/.ssh/id_ed25519.pub` on your control machine. If you don't have one yet:
+
+```bash
+ssh-keygen -t ed25519 -C "ansible"
+```
+
+### 3 — Grant passwordless sudo
+
+```bash
+sudo visudo -f /etc/sudoers.d/ansible
+```
+
+Add this line:
+
+```
+ansible ALL=(ALL) NOPASSWD: ALL
+```
+
+### 4 — Verify access from your control machine
+
+```bash
+ssh -i ~/.ssh/id_ed25519 ansible@<pi-ip>
+```
+
+Should connect without a password prompt. Once confirmed, Ansible is ready to use.
 
 ---
 
@@ -102,7 +153,7 @@ ansible-playbook main.yml --check --diff
 
 | Play | Hosts | Description |
 |---|---|---|
-| Common Setup | `pi-servers` | `apt dist-upgrade`, installs common packages, enables unattended-upgrades |
+| Common Setup | `servers` | `apt dist-upgrade`, installs common packages, enables unattended-upgrades |
 | GitHub Actions Runner | `pi-server-1` | Installs & registers a self-hosted runner via `monolithprojects.github_actions_runner` |
 
 ---
