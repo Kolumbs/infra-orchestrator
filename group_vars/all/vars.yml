@@ -4,7 +4,6 @@
 # vault.yml holds the vault_ secrets — must stay AES-256 encrypted. See README.
 
 ansible_user: "{{ vault_ansible_user }}"
-ansible_ssh_pass: "{{ vault_ansible_ssh_pass }}"
 ansible_ssh_private_key_file: "{{ vault_ansible_ssh_private_key_file }}"
 ansible_port: "{{ vault_ssh_port }}"
 ansible_python_interpreter: /usr/bin/python3
