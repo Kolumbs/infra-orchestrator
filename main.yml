@@ -19,14 +19,7 @@
           - curl
           - git
           - htop
-          - unattended-upgrades
         state: present
-
-    - name: Enable automatic security updates
-      ansible.builtin.service:
-        name: unattended-upgrades
-        state: started
-        enabled: true
 
 - name: Provision GitHub Actions Runner (Pi)
   hosts: pi-server-1
@@ -35,8 +28,6 @@
     - role: monolithprojects.github_actions_runner
       vars:
         access_token: "{{ github_runner_registration_token }}"
-        github_account: "{{ github_account }}"
-        github_repo: "{{ github_repo }}"
         runner_user: "{{ ansible_user }}"
         runner_name: "pi-server-1"
         runner_labels:
