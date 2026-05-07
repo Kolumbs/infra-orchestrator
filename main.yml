@@ -21,6 +21,12 @@
   hosts: servers
   become: true
   tasks:
+    - name: Validate configured system upgrade policy
+      ansible.builtin.assert:
+        that:
+          - system_upgrade_policy in ["none", "safe", "full", "dist", "yes"]
+        fail_msg: "Invalid system_upgrade_policy. Allowed values: none, safe, full, dist, yes."
+
     - name: Run explicit system upgrade policy
       ansible.builtin.apt:
         update_cache: true
