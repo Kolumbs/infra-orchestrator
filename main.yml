@@ -25,15 +25,7 @@
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
-        name: >-
-          {{
-            apache_package_name ~
-            (
-              '=' ~ apache_package_version
-              if apache_package_version is defined and apache_package_version is not none
-              else ''
-            )
-          }}
+        name: "{{ apache_package_name }}{{ '=' ~ apache_package_version if (apache_package_version | default(none)) is not none else '' }}"
         state: present
 
     - name: Ensure Apache service is enabled and running
