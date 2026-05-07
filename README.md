@@ -152,7 +152,6 @@ ansible-playbook main.yml --check --diff
 | Play | Hosts | Description |
 |---|---|---|
 | Common Setup | `servers` | Installs common packages |
-| System Upgrade | `servers` | Runs explicit `apt` upgrade policy via `system_upgrade_policy` (`none`/`safe`/`full`/`dist`) |
 | Web Server | `web_server` | Installs Apache (`apache2`) with optional version pinning and ensures service is running |
 | GitHub Actions Runner | `pi-server-1` | Installs & registers a self-hosted runner via `monolithprojects.github_actions_runner` |
 
