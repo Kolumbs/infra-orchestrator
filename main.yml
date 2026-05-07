@@ -23,7 +23,7 @@
   tasks:
     - name: Compute Apache package spec
       ansible.builtin.set_fact:
-        apache_package_spec: "{{ apache_package_name }}{{ '=' ~ apache_package_version if (apache_package_version | default(none)) is not none else '' }}"
+        apache_package_spec: "{{ apache_package_name }}{{ '=' ~ apache_package_version if (apache_package_version | default('')) != '' else '' }}"
 
     - name: Install configured Apache package (latest or pinned)
       ansible.builtin.apt:
