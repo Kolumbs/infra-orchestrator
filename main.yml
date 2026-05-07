@@ -21,15 +21,18 @@
   hosts: web_server
   become: true
   tasks:
-    - name: Compute Apache package spec
-      ansible.builtin.set_fact:
-        apache_package_spec: "{{ apache_package_name }}{{ '=' ~ apache_package_version if (apache_package_version | default('') | length) > 0 else '' }}"
+    - name: Ensure Apache package version is defined
+      ansible.builtin.assert:
+        that:
+          - apache_package_version is defined
+          - (apache_package_version | length) > 0
+        fail_msg: "apache_package_version must be explicitly set to a pinned version."
 
-    - name: Install configured Apache package (latest or pinned)
+    - name: Install pinned Apache package version
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
-        name: "{{ apache_package_spec }}"
+        name: "{{ apache_package_name }}={{ apache_package_version }}"
         state: present
 
     - name: Ensure Apache service is enabled and running
