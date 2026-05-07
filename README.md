@@ -24,14 +24,6 @@ This repository uses a **zero-knowledge configuration**: even with full read acc
 
 ---
 
-## Managed devices
-
-| Host | Group | Role |
-|---|---|---|
-| `pi-server-1` | `servers` | GitHub Actions self-hosted runner |
-
----
-
 ## Prerequisites
 
 | Tool | Version |
@@ -46,9 +38,9 @@ sudo apt install ansible-core sshpass
 
 ---
 
-## First-time server bootstrap (manual, on the Pi)
+## First-time server bootstrap (manual)
 
-Before Ansible can connect, a dedicated `ansible` user must be created on each server. Do this once over direct access (keyboard/HDMI or with the default `pi` user).
+Before Ansible can connect, a dedicated `ansible` user must be created on each target Unix-like device. Do this once over direct access or any existing administrative account.
 
 ### 1 — Create the automation user
 
@@ -67,10 +59,10 @@ On your control machine, generate a key if you don't have one yet:
 ssh-keygen -t ed25519
 ```
 
-Then copy it to the Pi in one command (run from your control machine):
+Then copy it to the target device in one command (run from your control machine):
 
 ```bash
-cat ~/.ssh/id_ed25519.pub | ssh <pi-user>@<pi-ip> "sudo mkdir -p /home/<username>/.ssh && sudo tee /home/<username>/.ssh/authorized_keys && sudo chmod 700 /home/<username>/.ssh && sudo chmod 600 /home/<username>/.ssh/authorized_keys && sudo chown -R <username>:<username> /home/<username>/.ssh"
+cat ~/.ssh/id_ed25519.pub | ssh <admin-user>@<device-ip> "sudo mkdir -p /home/<username>/.ssh && sudo tee /home/<username>/.ssh/authorized_keys && sudo chmod 700 /home/<username>/.ssh && sudo chmod 600 /home/<username>/.ssh/authorized_keys && sudo chown -R <username>:<username> /home/<username>/.ssh"
 ```
 
 ### 3 — Grant passwordless sudo
@@ -88,7 +80,7 @@ Add this line:
 ### 4 — Verify access from your control machine
 
 ```bash
-ssh -i ~/.ssh/id_ed25519 <username>@<pi-ip>
+ssh -i ~/.ssh/id_ed25519 <username>@<device-ip>
 ```
 
 Should connect without a password prompt. Once confirmed, Ansible is ready to use.
@@ -144,15 +136,6 @@ ansible-playbook main.yml --limit pi-server-1
 ```bash
 ansible-playbook main.yml --check --diff
 ```
-
----
-
-## What each play does
-
-| Play | Hosts | Description |
-|---|---|---|
-| Common Setup | `servers` | `apt dist-upgrade`, installs common packages, enables unattended-upgrades |
-| GitHub Actions Runner | `pi-server-1` | Installs & registers a self-hosted runner via `monolithprojects.github_actions_runner` |
 
 ---
 

@@ -13,3 +13,7 @@ github_account: "Kolumbs"
 github_repo: "family-bot"
 
 system_timezone: "Europe/Riga"
+
+apache_package_name: "apache2"
+apache_package_version: "2.4.67" # exact package version to pin
+apache_service_name: "apache2"

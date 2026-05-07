@@ -6,20 +6,40 @@
   hosts: servers
   become: true
   tasks:
-    - name: System Update
-      ansible.builtin.apt:
-        update_cache: yes
-        upgrade: safe
-        cache_valid_time: 3600
-
     - name: Ensure common packages are installed
       ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
         name:
           - vim
           - curl
           - git
           - htop
         state: present
+
+- name: Provision web servers
+  hosts: web_server
+  become: true
+  tasks:
+    - name: Ensure Apache package version is defined
+      ansible.builtin.assert:
+        that:
+          - apache_package_version is defined
+          - (apache_package_version | string | length) > 0
+        fail_msg: "apache_package_version must be explicitly set to a pinned version."
+
+    - name: Install pinned Apache package version
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+        name: "{{ apache_package_name }}={{ apache_package_version }}"
+        state: present
+
+    - name: Ensure Apache service is enabled and running
+      ansible.builtin.service:
+        name: "{{ apache_service_name }}"
+        enabled: true
+        state: started
 
 - name: Provision GitHub Actions Runner (Pi)
   hosts: pi-server-1
