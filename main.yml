@@ -6,20 +6,44 @@
   hosts: servers
   become: true
   tasks:
-    - name: System Update
-      ansible.builtin.apt:
-        update_cache: yes
-        upgrade: safe
-        cache_valid_time: 3600
-
     - name: Ensure common packages are installed
       ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
         name:
           - vim
           - curl
           - git
           - htop
         state: present
+
+- name: Explicit system upgrade handling
+  hosts: servers
+  become: true
+  tasks:
+    - name: Run explicit system upgrade policy
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+        upgrade: "{{ system_upgrade_policy }}"
+      when: system_upgrade_policy != "none"
+
+- name: Provision web servers
+  hosts: web_server
+  become: true
+  tasks:
+    - name: Install Apache package with optional version pinning
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+        name: "{{ apache_package_name }}{{ '=' ~ apache_package_version if apache_package_version | length > 0 else '' }}"
+        state: present
+
+    - name: Ensure Apache service is enabled and running
+      ansible.builtin.service:
+        name: "{{ apache_service_name }}"
+        enabled: true
+        state: started
 
 - name: Provision GitHub Actions Runner (Pi)
   hosts: pi-server-1

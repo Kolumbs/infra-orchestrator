@@ -28,7 +28,7 @@ This repository uses a **zero-knowledge configuration**: even with full read acc
 
 | Host | Group | Role |
 |---|---|---|
-| `pi-server-1` | `servers` | GitHub Actions self-hosted runner |
+| `pi-server-1` | `servers`, `web_server` | GitHub Actions self-hosted runner + Apache web server |
 
 ---
 
@@ -151,7 +151,9 @@ ansible-playbook main.yml --check --diff
 
 | Play | Hosts | Description |
 |---|---|---|
-| Common Setup | `servers` | `apt dist-upgrade`, installs common packages, enables unattended-upgrades |
+| Common Setup | `servers` | Installs common packages |
+| System Upgrade | `servers` | Runs explicit `apt` upgrade policy via `system_upgrade_policy` (`none`/`safe`/`full`/`dist`/`yes`) |
+| Web Server | `web_server` | Installs Apache (`apache2`) with optional version pinning and ensures service is running |
 | GitHub Actions Runner | `pi-server-1` | Installs & registers a self-hosted runner via `monolithprojects.github_actions_runner` |
 
 ---
