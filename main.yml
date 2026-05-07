@@ -32,12 +32,21 @@
   hosts: web_server
   become: true
   tasks:
-    - name: Install Apache package with optional version pinning
+    - name: Install latest configured Apache package
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
-        name: "{{ apache_package_name }}{{ '=' ~ apache_package_version if apache_package_version | length > 0 else '' }}"
+        name: "{{ apache_package_name }}"
         state: present
+      when: apache_package_version is not defined or apache_package_version is none
+
+    - name: Install pinned Apache package version
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+        name: "{{ apache_package_name }}={{ apache_package_version }}"
+        state: present
+      when: apache_package_version is defined and apache_package_version is not none
 
     - name: Ensure Apache service is enabled and running
       ansible.builtin.service:
