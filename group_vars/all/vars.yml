@@ -14,7 +14,7 @@ github_repo: "family-bot"
 
 system_timezone: "Europe/Riga"
 
-system_upgrade_policy: "none" # one of: none, safe, full, dist, yes
+system_upgrade_policy: "none" # one of: none, safe, full, dist
 
 apache_package_name: "apache2"
 apache_package_version: null # set e.g. "2.4.62-1~deb12u2" to pin exact version

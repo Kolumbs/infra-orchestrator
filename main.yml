@@ -24,8 +24,8 @@
     - name: Validate configured system upgrade policy
       ansible.builtin.assert:
         that:
-          - system_upgrade_policy in ["none", "safe", "full", "dist", "yes"]
-        fail_msg: "Invalid system_upgrade_policy. Allowed values: none, safe, full, dist, yes."
+          - system_upgrade_policy in ["none", "safe", "full", "dist"]
+        fail_msg: "Invalid system_upgrade_policy. Allowed values: none, safe, full, dist."
 
     - name: Run explicit system upgrade policy
       ansible.builtin.apt:
