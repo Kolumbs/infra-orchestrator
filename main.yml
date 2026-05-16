@@ -21,14 +21,14 @@
   hosts: web_server
   become: true
   tasks:
-    - name: Ensure Apache package version is defined
+    - name: Ensure Apache package version constraint is defined
       ansible.builtin.assert:
         that:
           - apache_package_version is defined
           - (apache_package_version | string | length) > 0
-        fail_msg: "apache_package_version must be explicitly set to a pinned version."
+        fail_msg: "apache_package_version must be set (for example: 2.4.67*)."
 
-    - name: Install pinned Apache package version
+    - name: Install Apache package using version constraint
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
